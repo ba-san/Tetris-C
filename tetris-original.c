@@ -360,7 +360,7 @@ void copyBlock(Cell src[BLOCK_SIZE][BLOCK_SIZE], Cell dst[BLOCK_SIZE][BLOCK_SIZE
 			dst[j][i]=src[j][i]; 
 }
 
-int printBlock(Cell block[BLOCK_SIZE][BLOCK_SIZE, int x, int y]){
+int printBlock(Cell block[BLOCK_SIZE][BLOCK_SIZE], int x, int y){
 	int i, j;
 	for(j=0; j<BLOCK_SIZE; j++)
 		for(i=0; i<BLOCK_SIZE; i++)
@@ -419,7 +419,7 @@ int tinit(void){
 	ntty.c_oflag &= ~OPOST;
 	ntty.c_lflag &= ~(ICANON|ECHO);
 	ntty.c_cc[VMIN] = 1;
-	ntty.c_CC[VTIME] = 0;
+	ntty.c_cc[VTIME] = 0;
 	tcsetattr(1, TCSADRAIN, &ntty);
 	signal(SIGINT, onsignal);
 	signal(SIGQUIT, onsignal);
@@ -427,7 +427,7 @@ int tinit(void){
 	signal(SIGHUP, onsignal);
 }
 
-void rotateBlock(Cell src[BLOCK_SIZE][BLOCK_SIZE, Cell dst[BLOCK_SIZE][BLOCK_SIZE]]){
+void rotateBlock(Cell src[BLOCK_SIZE][BLOCK_SIZE], Cell dst[BLOCK_SIZE][BLOCK_SIZE]){
 	int i, j;
 	for(j=0; j<BLOCK_SIZE; j++)
 		for(i=0; i<BLOCK_SIZE; i++)
@@ -484,4 +484,37 @@ void deleteLine(int ys){
 	setBackColor(BLACK);
 	clearScreen();
 	printMap();
+}
+
+int deleteMap(void){
+	int y, count;
+	count=0;
+	for(y=0;y<HEIGHT;y++)
+		if(checkLine(y)==0){
+			deleteLine(y);
+			count++;
+		}
+	return count;
+}
+
+void printNext(int type){
+	int i, j;
+	Cell a = {' ', BLACK, BLACK, NORMAL};
+	setPosition(0, 0);
+	setAttribute(NORMAL);
+	setBackColor(WHITE);
+	setCharColor(BLACK);
+	printf("NEXT");
+	for(j=0;j<BLOCK_SIZE;j++)
+		for(i=0;i<BLOCK_SIZE;i++)
+			printCell(a, 5+i, 0+j);
+	printBlock(block_type[type], 5, 0);
+}
+
+void printScore(int score){
+	setPosition(WIDTH, 10);
+	setAttribute(NORMAL);
+	setBackColor(WHITE);
+	setCharColor(BLACK);
+	printf("Score' %d", score);
 }
